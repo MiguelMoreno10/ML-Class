@@ -33,7 +33,9 @@ library(MASS); library(dplyr); library(caret)
 library(mlbench); library(tidyverse)  
 library(modelr); library(broom); library(pROC) 
 library(ggplot2); library(mice); library("gridExtra")
-library(PerformanceAnalytics); library(readr)
+library(PerformanceAnalytics); library(mice);
+library(corrplot); library(knitr); library(readr);
+library(reshape2); library(tibble); library(skimr)  
 ```
 
 R// cargar la base de datos
@@ -43,13 +45,23 @@ getwd()
 setwd("C:/Users/Miguel Angel/Documents/materias/Ciencias de datos/DS - 2021/tareas en clase/Parcial 3") 
 Estudiantes <- read_csv("StudentsPerformance.csv")
 Estudiantes <- data.frame(Estudiantes)
+Es
 ```
 
 4 - Defina su pregunta de investigación a continuación. ¿Qué te interesa de los datos? ¿Cuál es una pregunta específica que desea averiguar sobre los datos? (10 Puntos).
 
+R// Para la pregunta de investigacion es ¿Saber si el cursos de preparacion es efectivo para los etudiantes?,los mas interesante de los datos es saber si el sexo influye en la nota de los estudiantes, Si el estudios de lo padres pueden influir en la nota
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+5 - Dada su pregunta, ¿cuál es su expectativa sobre los datos?, es decir, ¿qué conclusiones espera obtener del análisis de sus datos? (10 Puntos)
+
+R// Los que se espera de la pregunta saber que si el curso de prepario es efectivo y puede influir en la nota de los alumnos 
+6- Cargue los datos a continuación y utilice dplyr::glimpse() o skimr::skim()sobre los datos. Debe cargar el archivo de datos en el directorio. Limpieza de los datos. 
+
+R//
+
+```{r}
+head(Estudiantes)
+glimpse(Estudiantes)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
