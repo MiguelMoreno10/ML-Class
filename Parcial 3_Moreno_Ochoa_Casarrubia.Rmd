@@ -3,6 +3,7 @@ title: "Parcial 3"
 author: "Moreno - Ochoa - Casarubio"
 date: "30/11/2021"
 output:
+  pdf_document: default
   html_document:
     df_print: paged
 ---
@@ -90,7 +91,7 @@ str(Estudiantes)
 Describir los resultados de la graficas. 
 Realizar modelos ejemplo: clasificación como el logístico. 
 
-```{r}
+```{r, warning= FALSE, message = FALSE }
 #Grafica de Completos Vs Icompletos
 Estudiantes %>%
   ggplot() +
@@ -161,5 +162,83 @@ Estudiantes %>%
 ```
 
 podemos ver que la distribucion de los datos es mejor para los que terminaron la preparacion para el curso, su nota es mejor respetos a los otros que no lo terminaron en los tres graficos 
+
+### Modelo Logistico 
+
+```{r, warning= FALSE, message = FALSE }
+#### Modelos 
+
+
+# Modelo de Regresion Logistica 
+# Model1: Todas los predictores
+
+model1 <- glm(Estudiantes ~.,family = binomial, data= Estudiantes ) # si queremos utilizar todas las varaibles 
+summary(model1)
+
+# Formula <-  glm (y ~ X1 + x2 + xn ...)
+
+# Model2: predictores significativo
+
+model2 <- glm(Estudiantes ~ math.score + reading.score + writing.score,
+              family = binomial,data=Estudiantes)
+
+summary(model2)
+
+# Info. Modelo
+model1$fitted.values
+
+# Paso 4: Evaluación de los Modelos -----
+
+library(dplyr)
+# selecciona 20 observaciones del dataset original
+prueba <- diabetes %>%
+  sample_n(200, replace = FALSE)
+dim(prueba)
+head(prueba, 5)
+str(prueba)
+# quita el outcome(diabetes)
+
+prueba1 <- prueba %>%
+  select(-diabetes)
+dim(prueba1)
+head(prueba1,5)
+
+# Validacion con dataset de validación (20 Obs random) 
+?predict
+pred1 <- predict(model1, newdata = prueba1, type = "response")
+pred2 <- ifelse(pred1 > 0.5, "pos", "neg")
+pred2 <- factor(pred2)
+
+typeof(pred2)
+actual <- factor(prueba$diabetes)
+actual
+
+prediction <- data.frame(pred2,actual)
+prediction
+
+mean(pred2==actual)
+
+# Paso 5: Evaluación (Métricas)  ---- 
+library(caret)
+
+confusionMatrix(pred2,actual, positive = "pos")
+??confusionMatrix
+
+# Paso 6: Curva Roc   -----
+install.packages("pROC")
+library(pROC)
+
+# Curva Roc
+library(pROC)
+plot.roc(prueba$diabetes, pred1,
+         main="Curva ROC del Model", percent=TRUE,
+         ci=TRUE, of="thresholds", # compute  the threshold of prediction 
+         thresholds="best", # select the (best) threshold
+         print.thres="best", 
+         print.auc=TRUE,ci.auc=TRUE) # a
+
+```
+
+
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
