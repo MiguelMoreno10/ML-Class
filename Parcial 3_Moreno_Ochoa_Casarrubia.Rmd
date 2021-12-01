@@ -2,7 +2,9 @@
 title: "Parcial 3"
 author: "Moreno - Ochoa - Casarubio"
 date: "30/11/2021"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -45,7 +47,6 @@ getwd()
 setwd("C:/Users/Miguel Angel/Documents/materias/Ciencias de datos/DS - 2021/tareas en clase/Parcial 3") 
 Estudiantes <- read_csv("StudentsPerformance.csv")
 Estudiantes <- data.frame(Estudiantes)
-Es
 ```
 
 4 - Defina su pregunta de investigación a continuación. ¿Qué te interesa de los datos? ¿Cuál es una pregunta específica que desea averiguar sobre los datos? (10 Puntos).
@@ -60,8 +61,105 @@ R// Los que se espera de la pregunta saber que si el curso de prepario es efecti
 R//
 
 ```{r}
-head(Estudiantes)
+## Examinar los datos 
 glimpse(Estudiantes)
+head(Estudiantes)
+skim(Estudiantes) ## Importante para el analisis de datos 
+summary(Estudiantes)
+
+which(is.na(Estudiantes))  # odentificar NA en el dataframe
+sum(is.na(Estudiantes))  
 ```
+
+7- Si los datos necesitan ser transformados de alguna manera (valores recodificados, pivotados, etc.), hágalo aquí. Los ejemplos incluyen transformar una variable continua en un uso categórico case_when (), etc.
+
+R// Conversion de datos en factor 
+
+```{r}
+Estudiantes$gender <- as.factor(Estudiantes$gender) 
+Estudiantes$race.ethnicity <- as.factor(Estudiantes$race.ethnicity) 
+Estudiantes$parental.level.of.education <- as.factor(Estudiantes$parental.level.of.education) 
+Estudiantes$lunch <- as.factor(Estudiantes$lunch ) 
+Estudiantes$test.preparation.course <- as.factor(Estudiantes$test.preparation.course) 
+glimpse(Estudiantes)
+str(Estudiantes)
+
+```
+
+8- Utilice aquí group_by() / summarize()para hacer un resumen de los datos. El resumen debe ser relevante para su pregunta de investigación. 
+Describir los resultados de la graficas. 
+Realizar modelos ejemplo: clasificación como el logístico. 
+
+```{r}
+#Grafica de Completos Vs Icompletos
+Estudiantes %>%
+  ggplot() +
+  geom_bar(aes(x= Estudiantes$test.preparation.course), fill= c("brown","steelblue")) + 
+  labs(x='Prepacion del curso', y="Numero de Personas", title='Graficas Completos vs Incompletos') +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+
+# Porcentaje de personas con preparacion completa 
+round(((sum(Estudiantes$test.preparation.course=="completed"))/(sum(Estudiantes$test.preparation.course=="completed")+
+                                             sum(Estudiantes$test.preparation.course=="none")))*100 , 2) 
+# Porcentaje de personas con preparacion incompleta
+round(((sum(Estudiantes$test.preparation.course=="none"))/(sum(Estudiantes$test.preparation.course=="completed")+
+                                             sum(Estudiantes$test.preparation.course=="none")))*100 , 2) 
+
+# Por los graficos y el porcentaje podemos decir que hay mas personas que no completaron sus estudios de preparacion 
+
+Estudiantes %>%
+  ggplot() +
+  geom_bar(aes(x= Estudiantes$gender), fill= c("brown","steelblue")) + 
+  labs(x='Genero', y="Numero de Personas", title='Graficas Hombre vs Mujeres') +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+
+# Tambien podemos decir que hay mas mujeres que hombres
+
+Estudiantes %>%
+  ggplot() +
+  geom_bar(aes(x= Estudiantes$lunch), fill= c("brown","steelblue")) + 
+  labs(x='Personas que almorzaron', y="Numero de Personas", title='Graficas Comida gratis vs estandar') +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+#Podemos que la mayoria de los estudiantes prefieren la comida estandar
+
+## Analisis de datos con graficas 
+
+Estudiantes %>%
+  ggplot( aes(x= Estudiantes$test.preparation.course, y= math.score)) +
+  geom_boxplot(fill="slateblue", alpha=0.2) +
+  geom_jitter(color="black", size=0.8, alpha=0.9) +
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Boxplot Nota de Matematica") +
+  xlab("")
+
+
+Estudiantes %>%
+  ggplot( aes(x= Estudiantes$test.preparation.course, y= reading.score)) +
+  geom_boxplot(fill="slateblue", alpha=0.2) +
+  geom_jitter(color="black", size=0.8, alpha=0.9) +
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Boxplot Noda de lectura") +
+  xlab("")
+
+Estudiantes %>%
+  ggplot( aes(x= Estudiantes$test.preparation.course, y= writing.score)) +
+  geom_boxplot(fill="slateblue", alpha=0.2) +
+  geom_jitter(color="black", size=0.8, alpha=0.9) +
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=11)
+  ) +
+  ggtitle("Boxplot Nota de escritura") +
+  xlab("")
+```
+
+podemos ver que la distribucion de los datos es mejor para los que terminaron la preparacion para el curso, su nota es mejor respetos a los otros que no lo terminaron en los tres graficos 
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
